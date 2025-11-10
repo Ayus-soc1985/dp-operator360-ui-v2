@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Mail, User, Building, Calendar, TrendingUp, AlertTriangle, CheckCircle, Activity, Clock, Zap, ArrowLeft, Shield, Award, Target } from 'lucide-react';
+import { X, MapPin, Mail, User, Building, Calendar, TrendingUp, AlertTriangle, CheckCircle, Activity, Clock, Zap, ArrowLeft, Shield, Award, Target, MessageSquare, Check, XCircle } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 
 const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryColor }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  
+  // Feedback state
+  const [feedback, setFeedback] = useState({
+    verifiedFraudOperator: null, // true/false
+    verifiedNonFraudOperator: null, // true/false
+    verifiedMachineCloning: null, // 'checked-cloning' / 'checked-no-cloning' / null
+    machineCloningSuspect: '', // remark text
+    verifiedPacketAnomaly: null, // true/false
+    oddHourPacketsAllowed: null // true/false
+  });
 
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 50);
@@ -128,7 +138,8 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
                 { id: 'overview', label: 'Overview', icon: Shield },
                 { id: 'performance', label: 'Performance', icon: TrendingUp },
                 { id: 'anomalies', label: 'Anomalies', icon: AlertTriangle },
-                { id: 'details', label: 'Details', icon: User }
+                { id: 'details', label: 'Details', icon: User },
+                { id: 'feedback', label: 'Feedback', icon: MessageSquare }
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -450,6 +461,301 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
                 <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 text-center shadow-lg hover:scale-105 transition-transform duration-300">
                   <div className="text-sm text-orange-700 mb-2 font-bold uppercase tracking-wide">DOB Changes</div>
                   <div className="text-4xl font-extrabold text-orange-900">{operator.updt_child_to_adult_dob_count}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Feedback Section */}
+          {activeSection === 'feedback' && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-[#e8dff2] to-[#d2c5e7] rounded-lg">
+                    <MessageSquare className="w-6 h-6 text-[#9b7bb5]" />
+                  </div>
+                  Operator Verification & Feedback
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  Please review and provide feedback on the following verification parameters for this operator.
+                </p>
+
+                <div className="space-y-6">
+                  {/* 1. Verified Fraud Operator */}
+                  <div className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-white to-gray-50">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">1</div>
+                      Verified Fraud Operator
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">Has this operator been verified as fraudulent?</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedFraudOperator: true})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedFraudOperator === true
+                            ? 'bg-red-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300'
+                        }`}
+                      >
+                        <XCircle className="w-5 h-5" />
+                        Yes - Fraud Detected
+                      </button>
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedFraudOperator: false})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedFraudOperator === false
+                            ? 'bg-green-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300'
+                        }`}
+                      >
+                        <Check className="w-5 h-5" />
+                        No - Not Fraud
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 2. Verified Non-Fraud Operator */}
+                  <div className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-white to-gray-50">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">2</div>
+                      Verified Non-Fraud Operator
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">Has this operator been verified as legitimate/non-fraudulent?</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedNonFraudOperator: true})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedNonFraudOperator === true
+                            ? 'bg-green-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300'
+                        }`}
+                      >
+                        <Check className="w-5 h-5" />
+                        Yes - Verified Legitimate
+                      </button>
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedNonFraudOperator: false})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedNonFraudOperator === false
+                            ? 'bg-red-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300'
+                        }`}
+                      >
+                        <XCircle className="w-5 h-5" />
+                        No - Not Verified
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 3. Verified Machine Cloning */}
+                  <div className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-white to-gray-50">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">3</div>
+                      Verified Machine Cloning
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">Check if operator is found to be cloning machines</p>
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setFeedback({...feedback, verifiedMachineCloning: 'checked-cloning'})}
+                          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                            feedback.verifiedMachineCloning === 'checked-cloning'
+                              ? 'bg-red-500 text-white shadow-lg scale-105'
+                              : 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300'
+                          }`}
+                        >
+                          <AlertTriangle className="w-5 h-5" />
+                          Checked - Cloning Detected
+                        </button>
+                        <button
+                          onClick={() => setFeedback({...feedback, verifiedMachineCloning: 'checked-no-cloning'})}
+                          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                            feedback.verifiedMachineCloning === 'checked-no-cloning'
+                              ? 'bg-green-500 text-white shadow-lg scale-105'
+                              : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300'
+                          }`}
+                        >
+                          <Check className="w-5 h-5" />
+                          Checked - No Cloning
+                        </button>
+                      </div>
+                      
+                      {feedback.verifiedMachineCloning === 'checked-cloning' && (
+                        <div className="mt-4 animate-fade-in">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Cloning Suspect Remarks <span className="text-red-500">*</span>
+                          </label>
+                          <textarea
+                            value={feedback.machineCloningSuspect}
+                            onChange={(e) => setFeedback({...feedback, machineCloningSuspect: e.target.value})}
+                            placeholder="Please provide detailed remarks about the machine cloning suspicion..."
+                            rows={4}
+                            className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            {feedback.machineCloningSuspect.length} characters
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 4. Verified Packet Anomaly */}
+                  <div className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-white to-gray-50">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">4</div>
+                      Verified Packet Anomaly
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">Have packet anomalies been verified for this operator?</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedPacketAnomaly: true})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedPacketAnomaly === true
+                            ? 'bg-red-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300'
+                        }`}
+                      >
+                        <AlertTriangle className="w-5 h-5" />
+                        Yes - Anomaly Verified
+                      </button>
+                      <button
+                        onClick={() => setFeedback({...feedback, verifiedPacketAnomaly: false})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.verifiedPacketAnomaly === false
+                            ? 'bg-green-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300'
+                        }`}
+                      >
+                        <Check className="w-5 h-5" />
+                        No - No Anomaly
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 5. Odd Hour Packets Allowed */}
+                  <div className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-white to-gray-50">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">5</div>
+                      Odd Hour Packets Allowed
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">Is this operator allowed to create packets during odd hours?</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setFeedback({...feedback, oddHourPacketsAllowed: true})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.oddHourPacketsAllowed === true
+                            ? 'bg-green-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300'
+                        }`}
+                      >
+                        <Check className="w-5 h-5" />
+                        Yes - Allowed
+                      </button>
+                      <button
+                        onClick={() => setFeedback({...feedback, oddHourPacketsAllowed: false})}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          feedback.oddHourPacketsAllowed === false
+                            ? 'bg-red-500 text-white shadow-lg scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300'
+                        }`}
+                      >
+                        <XCircle className="w-5 h-5" />
+                        No - Not Allowed
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="mt-8 flex justify-end gap-4 border-t pt-6">
+                  <button
+                    onClick={() => setFeedback({
+                      verifiedFraudOperator: null,
+                      verifiedNonFraudOperator: null,
+                      verifiedMachineCloning: null,
+                      machineCloningSuspect: '',
+                      verifiedPacketAnomaly: null,
+                      oddHourPacketsAllowed: null
+                    })}
+                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-all duration-300"
+                  >
+                    Reset Feedback
+                  </button>
+                  <button
+                    onClick={() => {
+                      console.log('Feedback submitted:', feedback);
+                      alert('Feedback submitted successfully!');
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-[#9b7bb5] to-[#d2c5e7] hover:from-[#7a5f93] hover:to-[#9b7bb5] text-white rounded-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                  >
+                    Submit Feedback
+                  </button>
+                </div>
+              </div>
+
+              {/* Feedback Summary Card */}
+              <div className="bg-gradient-to-br from-[#f5f2f8] to-[#e8dff2] rounded-2xl shadow-lg p-6 border border-[#d2c5e7]">
+                <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[#9b7bb5]" />
+                  Feedback Summary
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="font-medium text-gray-700">Fraud Operator:</span>
+                    <span className={`font-bold ${
+                      feedback.verifiedFraudOperator === true ? 'text-red-600' :
+                      feedback.verifiedFraudOperator === false ? 'text-green-600' :
+                      'text-gray-400'
+                    }`}>
+                      {feedback.verifiedFraudOperator === true ? 'Yes' : 
+                       feedback.verifiedFraudOperator === false ? 'No' : 'Not Set'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="font-medium text-gray-700">Non-Fraud Verified:</span>
+                    <span className={`font-bold ${
+                      feedback.verifiedNonFraudOperator === true ? 'text-green-600' :
+                      feedback.verifiedNonFraudOperator === false ? 'text-red-600' :
+                      'text-gray-400'
+                    }`}>
+                      {feedback.verifiedNonFraudOperator === true ? 'Yes' : 
+                       feedback.verifiedNonFraudOperator === false ? 'No' : 'Not Set'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="font-medium text-gray-700">Machine Cloning:</span>
+                    <span className={`font-bold ${
+                      feedback.verifiedMachineCloning === 'checked-cloning' ? 'text-red-600' :
+                      feedback.verifiedMachineCloning === 'checked-no-cloning' ? 'text-green-600' :
+                      'text-gray-400'
+                    }`}>
+                      {feedback.verifiedMachineCloning === 'checked-cloning' ? 'Detected' : 
+                       feedback.verifiedMachineCloning === 'checked-no-cloning' ? 'Not Detected' : 'Not Checked'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="font-medium text-gray-700">Packet Anomaly:</span>
+                    <span className={`font-bold ${
+                      feedback.verifiedPacketAnomaly === true ? 'text-red-600' :
+                      feedback.verifiedPacketAnomaly === false ? 'text-green-600' :
+                      'text-gray-400'
+                    }`}>
+                      {feedback.verifiedPacketAnomaly === true ? 'Verified' : 
+                       feedback.verifiedPacketAnomaly === false ? 'Not Found' : 'Not Set'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg md:col-span-2">
+                    <span className="font-medium text-gray-700">Odd Hour Packets:</span>
+                    <span className={`font-bold ${
+                      feedback.oddHourPacketsAllowed === true ? 'text-green-600' :
+                      feedback.oddHourPacketsAllowed === false ? 'text-red-600' :
+                      'text-gray-400'
+                    }`}>
+                      {feedback.oddHourPacketsAllowed === true ? 'Allowed' : 
+                       feedback.oddHourPacketsAllowed === false ? 'Not Allowed' : 'Not Set'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
