@@ -2,44 +2,39 @@ FROM harbor-registry-non-prod.uidai.gov.in/base/node:18-slim AS build
 
 WORKDIR /app
 
-COPY package*.json /app/
+# Copy package files
+COPY package*.json ./
 
-# ENV http_proxy=http://10.10.16.22:3128
-# ENV https_proxy=http://10.12.11.13:3128
-
-# proxy
+# Set npm registry
 RUN npm config set registry http://10.10.206.59:8080/repository/npm-proxy/
-# RUN npm config set https-proxy http://10.12.11.13:3128
 
-RUN npm ci
+# Install dependencies
+RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
-COPY . /app/
+# Copy application source
+COPY . .
 
+# Build the application
 RUN npm run build
 
-# RUN cat ./build/envConfig.js 
-
+# Production stage
 FROM harbor-registry-non-prod.uidai.gov.in/base/nginx:stable-alpine3.21-slim AS prod
 
-#Configure nginx
-RUN rm -rf /etc/nginx/nginx.conf
-COPY nginx.conf /etc/nginx/nginx.conf 
+# Remove default nginx config
+RUN rm -rf /etc/nginx/nginx.conf /etc/nginx/conf.d/*
 
-#Copy build files
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy build files from build stage
 COPY --from=build /app/build /usr/share/nginx/html
-# RUN cat /usr/share/nginx/html/envConfig.js 
+
+# Create a default index.html if build didn't create one
+RUN test -f /usr/share/nginx/html/index.html || echo '<!DOCTYPE html><html><head><title>App</title></head><body><h1>Application</h1></body></html>' > /usr/share/nginx/html/index.html
 
 EXPOSE 80
 
-#Copy script and env 
 WORKDIR /usr/share/nginx/html
-# COPY backend.sh .
-# COPY backend.env .
 
-
-# Make our shell scripts executable
-# RUN chmod +x backend.sh 
-
-# Modify CMD to execute both scripts
-CMD ["/bin/sh", "-c", "nginx -g 'daemon off;'"]
+CMD ["nginx", "-g", "daemon off;"]
 
