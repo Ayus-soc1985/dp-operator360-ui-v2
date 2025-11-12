@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, CheckCircle, TrendingUp } from 'lucide-react';
 import authService from '../services/AuthService';
+import uidaiLogo from '../Assets/uidaiLogo.svg';
+import aadhaarLogo from '../Assets/aadhaarLogo.svg';
 
 const LandingPage = () => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#d2c5e7] via-[#e8dff2] to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#d2c5e7] via-[#e8dff2] to-white flex flex-col">
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
@@ -58,11 +60,51 @@ const LandingPage = () => {
         .fade-in-up {
           animation: fadeInUp 0.8s ease-out forwards;
         }
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+        .shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite;
+        }
       `}</style>
 
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        {/* Left Side - Branding and Features */}
-        <div className="text-center lg:text-left space-y-6 fade-in-up">
+      {/* Top Header with Logos */}
+      <div className="bg-white shadow-md py-4 px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <img src={uidaiLogo} alt="UIDAI Logo" className="h-12 md:h-16" />
+            <div className="hidden md:block w-px h-12 bg-gray-300"></div>
+            <img src={aadhaarLogo} alt="Aadhaar Logo" className="h-12 md:h-16" />
+          </div>
+          <div className="text-right">
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">Operator 360</h2>
+            <p className="text-xs md:text-sm text-gray-600">Anomaly Detection System</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left Side - Branding and Features */}
+          <div className="text-center lg:text-left space-y-6 fade-in-up">
+          {/* Large Visual Element */}
+          <div className="relative mb-8">
+            <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#9b7bb5] to-[#d2c5e7] rounded-2xl blur-xl opacity-50"></div>
+                <img 
+                  src={aadhaarLogo} 
+                  alt="Aadhaar" 
+                  className="relative h-20 md:h-24 drop-shadow-2xl"
+                />
+              </div>
+            </div>
+          </div>
+          
           <div className="inline-flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
             <Shield className="w-8 h-8 text-[#9b7bb5]" />
             <h1 className="text-2xl font-bold text-gray-800">Operator 360</h1>
@@ -70,11 +112,11 @@ const LandingPage = () => {
           
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
             Comprehensive Operator
-            <span className="block text-[#9b7bb5]">Anomaly Detection</span>
+            <span className="block text-[#9b7bb5] mt-2">Anomaly Detection</span>
           </h2>
           
           <p className="text-lg text-gray-700 leading-relaxed">
-            Monitor, analyze, and manage operator activities with advanced anomaly detection and real-time insights.
+            Monitor, analyze, and manage operator activities with advanced anomaly detection powered by UIDAI's secure infrastructure.
           </p>
 
           {/* Features */}
@@ -98,8 +140,20 @@ const LandingPage = () => {
 
         {/* Right Side - Login Card */}
         <div className="flex justify-center lg:justify-end">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-2 border-[#d2c5e7] fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-2 border-[#d2c5e7] fade-in-up relative overflow-hidden" style={{ animationDelay: '0.3s' }}>
+            {/* Decorative shimmer effect */}
+            <div className="absolute top-0 left-0 right-0 h-1 shimmer"></div>
+            
             <div className="text-center mb-8">
+              {/* UIDAI Logo in card */}
+              {/* <div className="mb-4">
+                <img 
+                  src={uidaiLogo} 
+                  alt="UIDAI" 
+                  className="h-16 mx-auto drop-shadow-lg"
+                />
+              </div> */}
+              
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#9b7bb5] to-[#d2c5e7] rounded-full mb-4 float-animation">
                 <Lock className="w-10 h-10 text-white" />
               </div>
@@ -139,20 +193,25 @@ const LandingPage = () => {
             </button>
 
             <div className="mt-6 text-center">
-              <p className="text-xs text-gray-500">
-                Secured by WSO2 Identity Server
-              </p>
-              <div className="flex items-center justify-center gap-2 mt-2">
+              {/* <div className="flex items-center justify-center gap-3 mb-3"> */}
+                {/* <img src={uidaiLogo} alt="UIDAI" className="h-6 opacity-70" /> */}
+                {/* <span className="text-xs text-gray-500">Secured by</span> */}
+              </div>
+              {/* <p className="text-xs text-gray-500">
+                WSO2 Identity Server
+              </p> */}
+              {/* <div className="flex items-center justify-center gap-2 mt-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 <span className="text-xs text-gray-600">OIDC Protocol</span>
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
                 By signing in, you agree to use Active Directory credentials
                 for authentication via OIDC protocol.
               </p>
+            </div>
             </div>
           </div>
         </div>
