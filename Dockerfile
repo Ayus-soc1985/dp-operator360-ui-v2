@@ -1,4 +1,4 @@
-FROM node:18-alpine AS build
+FROM harbor-registry-non-prod.uidai.gov.in/base/node:18-slim AS build
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN npm run build
 
 # RUN cat ./build/envConfig.js 
 
-FROM nginx:alpine-slim AS prod
+FROM harbor-registry-non-prod.uidai.gov.in/base/nginx:stable-alpine3.21-slim AS prod
 
 #Configure nginx
 RUN rm -rf /etc/nginx/nginx.conf
