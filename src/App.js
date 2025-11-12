@@ -1,13 +1,36 @@
 import React from 'react';
-import OperatorAnomalyDashboard from "./Components/OperatorAnomalyDashboard.jsx"
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './Components/LandingPage';
+import Callback from './Components/Callback';
+import ProtectedRoute from './Components/ProtectedRoute';
+import OperatorAnomalyDashboard from './Components/OperatorAnomalyDashboard';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-grow">
-        <OperatorAnomalyDashboard />
-      </main>
-    </div>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/callback" element={<Callback />} />
+            
+            {/* Protected Routes */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <OperatorAnomalyDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Redirect unknown routes to landing page */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

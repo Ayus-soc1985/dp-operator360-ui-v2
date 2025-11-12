@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity } from 'lucide-react';
+import AuthHeader from './AuthHeader';
 import OverviewTab from './OverviewTab';
 import PatternAnalysisTab from './PatternAnalysisTab';
 import VelocityAnalysisTab from './VelocityAnalysisTab';
@@ -441,23 +442,28 @@ const OperatorAnomalyDashboard = () => {
   const avgRiskScore = (anomalyAnalysis.reduce((sum, op) => sum + op.risk_score, 0) / anomalyAnalysis.length * 100).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <Shield className="w-8 h-8 text-red-500" />
-                Operator 360
-              </h1>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-500">Last Updated</div>
-              <div className="text-lg font-semibold">Nov 07, 2025</div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Auth Header with User Info and Logout */}
+      <AuthHeader />
+      
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Dashboard Title */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                  <Shield className="w-8 h-8 text-red-500" />
+                  Anomaly Detection Dashboard
+                </h1>
+                <p className="text-gray-600 mt-1">Monitor and analyze operator activities</p>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-500">Last Updated</div>
+                <div className="text-lg font-semibold">Nov 07, 2025</div>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -612,6 +618,7 @@ const OperatorAnomalyDashboard = () => {
               <p className="text-sm opacity-90">Immediate investigation recommended</p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
