@@ -17,7 +17,7 @@ COPY . /app/
 
 RUN npm run build
 
-RUN cat ./build/envConfig.js 
+# RUN cat ./build/envConfig.js 
 
 FROM nginx:alpine-slim AS prod
 
@@ -27,7 +27,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 #Copy build files
 COPY --from=build /app/build /usr/share/nginx/html
-RUN cat /usr/share/nginx/html/envConfig.js 
+# RUN cat /usr/share/nginx/html/envConfig.js 
 
 EXPOSE 80
 
