@@ -20,9 +20,12 @@ RUN npm run build
 # Production stage
 FROM harbor-registry-non-prod.uidai.gov.in/base/nginx:stable-alpine3.21-slim AS prod
 
+# Remove default nginx configurations to avoid entrypoint script conflicts
+RUN rm -f /etc/nginx/conf.d/default.conf
+
 # Copy custom nginx configs
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/conf.d/app.conf
 
 # Copy build files from build stage
 COPY --from=build /app/build /usr/share/nginx/html
@@ -30,9 +33,14 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Create a default index.html if build didn't create one
 RUN test -f /usr/share/nginx/html/index.html || echo '<!DOCTYPE html><html><head><title>App</title></head><body><h1>Application</h1></body></html>' > /usr/share/nginx/html/index.html
 
+# Test nginx configuration
+RUN nginx -t
+
 EXPOSE 80
 
 WORKDIR /usr/share/nginx/html
 
-CMD ["nginx", "-g", "daemon off;"]
+# Use direct nginx command instead of entrypoint to avoid script conflicts
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]
 
