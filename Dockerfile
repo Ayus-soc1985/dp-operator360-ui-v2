@@ -37,6 +37,15 @@ RUN ls -la /usr/share/nginx/html/
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
+# Ensure log directory exists and is writable
+RUN mkdir -p /var/log/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chmod -R 755 /var/log/nginx
+
+# Create symbolic links for stdout/stderr logging (Kubernetes best practice)
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
+
 EXPOSE 80
 
 #Copy script and env 
