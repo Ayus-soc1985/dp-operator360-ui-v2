@@ -17,17 +17,25 @@ COPY . /app/
 
 RUN npm run build
 
-RUN cat ./build/envConfig.js 
+# Verify build output
+RUN ls -la ./build/
 
 FROM nginx:alpine-slim AS prod
 
 #Configure nginx
 RUN rm -rf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf 
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 #Copy build files
 COPY --from=build /app/build /usr/share/nginx/html
-RUN cat /usr/share/nginx/html/envConfig.js 
+
+# Verify copied files
+RUN ls -la /usr/share/nginx/html/
+
+# Set proper permissions
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
 
 EXPOSE 80
 
@@ -39,6 +47,9 @@ WORKDIR /usr/share/nginx/html
 
 # Make our shell scripts executable
 # RUN chmod +x backend.sh 
+
+# Test nginx configuration
+RUN nginx -t
 
 # Modify CMD to execute both scripts
 CMD ["/bin/sh", "-c", "nginx -g 'daemon off;'"]
