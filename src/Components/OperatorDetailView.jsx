@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Mail, User, Building, Calendar, TrendingUp, AlertTriangle, CheckCircle, Activity, Clock, Zap, ArrowLeft, Shield, Award, Target, MessageSquare, Check, XCircle } from 'lucide-react';
+import { X, MapPin, Mail, User, Building, Calendar, TrendingUp, AlertTriangle, CheckCircle, Activity, Clock, Zap, ArrowLeft, Shield, Award, Target, MessageSquare, Check, XCircle, FileText, Phone, Hash, MapPinned, CreditCard, CheckSquare, XSquare, Timer } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
+import EnrollmentReview from './EnrollmentReview';
 
 const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryColor }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [activeSection, setActiveSection] = useState('overview');
+  const [activeSection, setActiveSection] = useState('details');
   
   // Feedback state
   const [feedback, setFeedback] = useState({
@@ -86,7 +87,7 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
         }
       `}</style>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1920px] mx-auto">
       
         <div className="bg-gradient-to-r from-[#d2c5e7] via-[#e3d9f0] to-white text-gray-800 shadow-2xl backdrop-blur-sm">
           <div className="p-6">
@@ -135,10 +136,11 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
             {/* Tab Navigation */}
             <div className="flex gap-2 mt-6 border-t border-[#d2c5e7] border-opacity-60 pt-4 flex-wrap">
               {[
-                { id: 'overview', label: 'Overview', icon: Shield },
-                { id: 'performance', label: 'Performance', icon: TrendingUp },
-                { id: 'anomalies', label: 'Anomalies', icon: AlertTriangle },
                 { id: 'details', label: 'Details', icon: User },
+                { id: 'overview', label: 'Overview', icon: Shield },
+                { id: 'performance', label: 'Risk Analysis', icon: TrendingUp },
+                { id: 'anomalies', label: 'Anomalies', icon: AlertTriangle },
+                { id: 'enrollmentReview', label: 'Packet Review', icon: FileText },
                 { id: 'feedback', label: 'Feedback', icon: MessageSquare }
               ].map(tab => (
                 <button
@@ -163,8 +165,9 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
           {/* Overview & Performance Section */}
           {(activeSection === 'overview' || activeSection === 'performance') && (
             <div className="space-y-6 animate-fade-in">
-              {/* Risk Meter and KPIs */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Risk Meter and Radar (Performance) OR KPIs (Overview) */}
+              {activeSection === 'performance' && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Enhanced Risk Meter */}
                 <div className="bg-white rounded-2xl p-8 shadow-2xl border-2 border-gray-100 hover:shadow-3xl transition-all duration-500 relative overflow-hidden pulse-glow">
                   <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-400 to-pink-400 opacity-10 rounded-full blur-3xl"></div>
@@ -222,7 +225,55 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
                   </div>
                 </div>
 
-                {/* Enhanced KPIs */}
+                {/* Radar Chart for Performance tab OR KPIs for Overview tab */}
+                {activeSection === 'performance' ? (
+                  <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <TrendingUp className="w-6 h-6 text-purple-600" />
+                      </div>
+                      Performance Metrics Radar
+                    </h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <RadarChart data={radarData}>
+                        <PolarGrid stroke="#e5e7eb" strokeWidth={2} />
+                        <PolarAngleAxis dataKey="metric" tick={{ fill: '#374151', fontSize: 15, fontWeight: 700 }} />
+                        <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#6b7280', fontSize: 13 }} />
+                        <Radar name="Performance" dataKey="score" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.7} strokeWidth={3} />
+                        <Tooltip contentStyle={{ backgroundColor: '#fff', border: '2px solid #8b5cf6', borderRadius: '12px', padding: '12px' }} formatter={(value) => [`${value.toFixed(1)}`, 'Score']} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                    <div className="text-center text-sm text-gray-600 mt-4 bg-gray-50 p-3 rounded-lg">
+                      💡 Higher scores indicate better performance in each metric
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                      <div className="p-2 bg-[#e8dff2] rounded-lg">
+                        <Award className="w-6 h-6 text-[#9b7bb5]" />
+                      </div>
+                      Performance Metrics Radar
+                    </h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <RadarChart data={radarData}>
+                        <PolarGrid stroke="#e5e7eb" strokeWidth={2} />
+                        <PolarAngleAxis dataKey="metric" tick={{ fill: '#374151', fontSize: 15, fontWeight: 700 }} />
+                        <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#6b7280', fontSize: 13 }} />
+                        <Radar name="Performance" dataKey="score" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.7} strokeWidth={3} />
+                        <Tooltip contentStyle={{ backgroundColor: '#fff', border: '2px solid #8b5cf6', borderRadius: '12px', padding: '12px' }} formatter={(value) => [`${value.toFixed(1)}`, 'Score']} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                    <div className="text-center text-sm text-gray-600 mt-4 bg-gray-50 p-3 rounded-lg">
+                      💡 Higher scores indicate better performance in each metric
+                    </div>
+                  </div>
+                )}
+              </div>
+              )}
+
+              {/* KPIs for Overview */}
+              {activeSection === 'overview' && (
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                     <div className="p-2 bg-[#e8dff2] rounded-lg">
@@ -281,30 +332,6 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
                       </div>
                       <div className="text-7xl opacity-20">⚠️</div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Radar Chart */}
-              {activeSection === 'performance' && (
-                <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-100 hover:shadow-2xl transition-shadow duration-300 animate-fade-in">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <TrendingUp className="w-6 h-6 text-purple-600" />
-                    </div>
-                    Performance Metrics Radar
-                  </h3>
-                  <ResponsiveContainer width="100%" height={450}>
-                    <RadarChart data={radarData}>
-                      <PolarGrid stroke="#e5e7eb" strokeWidth={2} />
-                      <PolarAngleAxis dataKey="metric" tick={{ fill: '#374151', fontSize: 15, fontWeight: 700 }} />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#6b7280', fontSize: 13 }} />
-                      <Radar name="Performance" dataKey="score" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.7} strokeWidth={3} />
-                      <Tooltip contentStyle={{ backgroundColor: '#fff', border: '2px solid #8b5cf6', borderRadius: '12px', padding: '12px' }} formatter={(value) => [`${value.toFixed(1)}`, 'Score']} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                  <div className="text-center text-sm text-gray-600 mt-4 bg-gray-50 p-3 rounded-lg">
-                    💡 Higher scores indicate better performance in each metric
                   </div>
                 </div>
               )}
@@ -464,6 +491,11 @@ const OperatorDetailView = ({ operator, onBack, getSeverityColor, getCategoryCol
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Enrollment Review Section */}
+          {activeSection === 'enrollmentReview' && (
+            <EnrollmentReview operator={operator} />
           )}
 
           {/* Feedback Section */}

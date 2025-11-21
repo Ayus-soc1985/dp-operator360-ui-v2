@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity } from 'lucide-react';
-import AuthHeader from './AuthHeader';
+import React, { useState, useMemo, useEffect } from 'react';
+import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity, Clock, Zap } from 'lucide-react';
 import OverviewTab from './OverviewTab';
 import PatternAnalysisTab from './PatternAnalysisTab';
 import VelocityAnalysisTab from './VelocityAnalysisTab';
@@ -149,6 +148,34 @@ const OperatorAnomalyDashboard = () => {
   const [selectedOperator, setSelectedOperator] = useState(null);
   const [filterRisk, setFilterRisk] = useState('all');
   const [activeTab, setActiveTab] = useState('overview');
+  const [apiData, setApiData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://10.8.18.150:8080/api/v1/home');
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard data');
+        }
+        const data = await response.json();
+        setApiData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message);
+        // Use fallback data if API fails
+        setApiData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   // Enhanced anomaly detection with more patterns
   const anomalyAnalysis = useMemo(() => {
@@ -367,6 +394,16 @@ const OperatorAnomalyDashboard = () => {
   }, [anomalyAnalysis]);
 
   const riskDistribution = useMemo(() => {
+    // Use API data if available
+    if (apiData) {
+      return [
+        { name: 'Low Risk', value: apiData.low_risk_opt, color: '#10b981' },
+        { name: 'Medium Risk', value: apiData.med_risk_opt, color: '#f59e0b' },
+        { name: 'High Risk', value: apiData.high_risk_opt, color: '#ef4444' }
+      ];
+    }
+    
+    // Fallback to calculated data
     const ranges = { low: 0, medium: 0, high: 0 };
     anomalyAnalysis.forEach(op => {
       if (op.risk_score < 0.1) ranges.low++;
@@ -378,7 +415,7 @@ const OperatorAnomalyDashboard = () => {
       { name: 'Medium Risk', value: ranges.medium, color: '#f59e0b' },
       { name: 'High Risk', value: ranges.high, color: '#ef4444' }
     ];
-  }, [anomalyAnalysis]);
+  }, [anomalyAnalysis, apiData]);
 
   const performanceData = useMemo(() => {
     return anomalyAnalysis.map(op => ({
@@ -442,71 +479,41 @@ const OperatorAnomalyDashboard = () => {
   const avgRiskScore = (anomalyAnalysis.reduce((sum, op) => sum + op.risk_score, 0) / anomalyAnalysis.length * 100).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Auth Header with User Info and Logout */}
-      <AuthHeader />
-      
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Dashboard Title */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <Shield className="w-8 h-8 text-red-500" />
-                  Anomaly Detection Dashboard
-                </h1>
-                <p className="text-gray-600 mt-1">Monitor and analyze operator activities</p>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-500">Last Updated</div>
-                <div className="text-lg font-semibold">Nov 07, 2025</div>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+      <div className="max-w-[1920px] mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <Shield className="w-8 h-8 text-red-500" />
+                Operator 360
+              </h1>
+              {apiData && (
+                <div className="mt-2 flex items-center gap-4">
+                  <p className="text-sm text-gray-600">Welcome, <span className="font-semibold">{apiData.username}</span></p>
+                  <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">{apiData.usertype}</span>
+                </div>
+              )}
             </div>
-          </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-md p-5 border-l-4 border-blue-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Total Operators</p>
-                <p className="text-2xl font-bold text-gray-900">{operatorData.length}</p>
-              </div>
-              <Users className="w-10 h-10 text-blue-500 opacity-20" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-5 border-l-4 border-red-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Total Anomalies</p>
-                <p className="text-2xl font-bold text-red-600">{totalAnomalies}</p>
-              </div>
-              <AlertTriangle className="w-10 h-10 text-red-500 opacity-20" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-5 border-l-4 border-orange-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">High Risk</p>
-                <p className="text-2xl font-bold text-orange-600">{highRiskCount}</p>
-              </div>
-              <AlertCircle className="w-10 h-10 text-orange-500 opacity-20" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Avg Risk Score</p>
-                <p className="text-2xl font-bold text-purple-600">{avgRiskScore}%</p>
-              </div>
-              <TrendingUp className="w-10 h-10 text-purple-500 opacity-20" />
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Last Updated</div>
+              <div className="text-lg font-semibold">Nov 13, 2025</div>
             </div>
           </div>
         </div>
+
+        {loading && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+            <p className="text-blue-700">Loading dashboard data...</p>
+          </div>
+        )}
+
+        {/* {error && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <p className="text-yellow-800">⚠️ Using cached data. API connection issue: {error}</p>
+          </div>
+        )} */}
 
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl shadow-md p-2">
@@ -562,6 +569,11 @@ const OperatorAnomalyDashboard = () => {
             performanceData={performanceData}
             riskCorrelation={riskCorrelation}
             riskRejectionData={riskRejectionData}
+            apiData={apiData}
+            patternAnalysis={patternAnalysis}
+            highRiskCount={highRiskCount}
+            setActiveTab={setActiveTab}
+            setFilterRisk={setFilterRisk}
           />
         )}
 
@@ -598,28 +610,7 @@ const OperatorAnomalyDashboard = () => {
           />
         )}
 
-        {/* Key Insights Summary */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-          <h2 className="text-2xl font-bold mb-4">🔍 Key Insights & Recommendations</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">Highest Risk Operator</h3>
-              <p className="text-lg">{anomalyAnalysis.sort((a, b) => b.risk_score - a.risk_score)[0].opt_name}</p>
-              <p className="text-sm opacity-90">Risk Score: {(anomalyAnalysis.sort((a, b) => b.risk_score - a.risk_score)[0].risk_score * 100).toFixed(1)}%</p>
-            </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">Most Common Anomaly</h3>
-              <p className="text-lg">{patternAnalysis[0]?.type || 'N/A'}</p>
-              <p className="text-sm opacity-90">Found in {patternAnalysis[0]?.count || 0} operators</p>
-            </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">Action Required</h3>
-              <p className="text-lg">{highRiskCount} operators need review</p>
-              <p className="text-sm opacity-90">Immediate investigation recommended</p>
-            </div>
-          </div>
-        </div>
-        </div>
+       
       </div>
     </div>
   );
