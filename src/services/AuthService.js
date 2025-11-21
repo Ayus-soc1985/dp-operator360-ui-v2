@@ -61,11 +61,23 @@ class AuthService {
     try {
       const user = await this.userManager.signinRedirectCallback();
       
+      // Store access token in session storage
+      if (user.access_token) {
+        sessionStorage.setItem('access_token', user.access_token);
+        sessionStorage.setItem('token_type', user.token_type || 'Bearer');
+        sessionStorage.setItem('expires_at', user.expires_at);
+        
+        // Also store user profile information
+        sessionStorage.setItem('user_profile', JSON.stringify(user.profile));
+      }
+      
       console.log('Authentication successful:', {
         userId: user.profile.sub,
         username: user.profile.preferred_username || user.profile.name,
         email: user.profile.email,
-        accessToken: user.access_token ? 'Present' : 'Missing',
+        accessToken: user.access_token,
+        tokenType: user.token_type,
+        expiresAt: new Date(user.expires_at * 1000).toISOString(),
         idToken: user.id_token ? 'Present' : 'Missing'
       });
 
@@ -87,6 +99,12 @@ class AuthService {
    */
   async logout() {
     try {
+      // Clear session storage tokens
+      sessionStorage.removeItem('access_token');
+      sessionStorage.removeItem('token_type');
+      sessionStorage.removeItem('expires_at');
+      sessionStorage.removeItem('user_profile');
+      
       await this.userManager.signoutRedirect();
     } catch (error) {
       console.error('Error during logout:', error);
@@ -100,6 +118,15 @@ class AuthService {
   async renewToken() {
     try {
       const user = await this.userManager.signinSilent();
+      
+      // Update access token in session storage
+      if (user.access_token) {
+        sessionStorage.setItem('access_token', user.access_token);
+        sessionStorage.setItem('token_type', user.token_type || 'Bearer');
+        sessionStorage.setItem('expires_at', user.expires_at);
+        sessionStorage.setItem('user_profile', JSON.stringify(user.profile));
+      }
+      
       return user;
     } catch (error) {
       console.error('Error renewing token:', error);
@@ -137,8 +164,29 @@ class AuthService {
    */
   async getAccessToken() {
     try {
+      // Try to get from session storage first
+      const storedToken = sessionStorage.getItem('access_token');
+      if (storedToken) {
+        const expiresAt = parseInt(sessionStorage.getItem('expires_at'));
+        const now = Math.floor(Date.now() / 1000);
+        
+        // Check if token is still valid
+        if (expiresAt && expiresAt > now) {
+          return storedToken;
+        }
+      }
+      
+      // If not in session storage or expired, get from UserManager
       const user = await this.getUser();
-      return user?.access_token || null;
+      if (user?.access_token) {
+        // Update session storage
+        sessionStorage.setItem('access_token', user.access_token);
+        sessionStorage.setItem('token_type', user.token_type || 'Bearer');
+        sessionStorage.setItem('expires_at', user.expires_at);
+        return user.access_token;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Error getting access token:', error);
       return null;
