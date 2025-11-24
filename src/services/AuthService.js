@@ -41,12 +41,25 @@ class AuthService {
    */
   async login() {
     try {
+      console.log('=== STARTING LOGIN PROCESS ===');
+      console.log('Current URL:', window.location.href);
+      
       // Store the current path to redirect back after login
       sessionStorage.setItem('redirectPath', window.location.pathname);
+      
+      console.log('Initiating signin redirect with config:', {
+        authority: authConfig.authority,
+        client_id: authConfig.client_id,
+        redirect_uri: authConfig.redirect_uri,
+        response_type: authConfig.response_type,
+        scope: authConfig.scope
+      });
       
       await this.userManager.signinRedirect({
         state: { returnUrl: window.location.pathname }
       });
+      
+      console.log('Signin redirect initiated - browser should now redirect to WSO2');
     } catch (error) {
       console.error('Error during login redirect:', error);
       throw error;
@@ -59,7 +72,13 @@ class AuthService {
    */
   async handleCallback() {
     try {
+      console.log('=== HANDLING CALLBACK ===');
+      console.log('Current URL:', window.location.href);
+      console.log('URL Search Params:', window.location.search);
+      
       const user = await this.userManager.signinRedirectCallback();
+      
+      console.log('Callback processing complete, user data received');
       
       // Store access token in session storage
       if (user.access_token) {
@@ -69,17 +88,18 @@ class AuthService {
         
         // Also store user profile information
         sessionStorage.setItem('user_profile', JSON.stringify(user.profile));
+        
+        console.log('Tokens stored in session storage');
       }
       
-      console.log('Authentication successful:', {
-        userId: user.profile.sub,
-        username: user.profile.preferred_username || user.profile.name,
-        email: user.profile.email,
-        accessToken: user.access_token,
-        tokenType: user.token_type,
-        expiresAt: new Date(user.expires_at * 1000).toISOString(),
-        idToken: user.id_token ? 'Present' : 'Missing'
-      });
+      console.log('=== AUTHENTICATION SUCCESSFUL ===');
+      console.log('User ID:', user.profile.sub);
+      console.log('Username:', user.profile.preferred_username || user.profile.name);
+      console.log('Email:', user.profile.email);
+      console.log('Access Token:', user.access_token ? user.access_token.substring(0, 20) + '...' : 'Missing');
+      console.log('Token Type:', user.token_type);
+      console.log('Expires At:', new Date(user.expires_at * 1000).toISOString());
+      console.log('ID Token:', user.id_token ? 'Present' : 'Missing');
 
       // Get the return URL from state
       const returnUrl = user.state?.returnUrl || '/dashboard';

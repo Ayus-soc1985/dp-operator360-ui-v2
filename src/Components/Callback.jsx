@@ -15,11 +15,21 @@ const Callback = () => {
 
   const handleAuthCallback = async () => {
     try {
+      console.log('=== CALLBACK COMPONENT MOUNTED ===');
+      console.log('Current URL:', window.location.href);
+      console.log('Search params:', window.location.search);
+      console.log('Hash:', window.location.hash);
+      
       setStatus('processing');
       setMessage('Validating authorization code...');
 
+      console.log('Calling authService.handleCallback()...');
+      
       // Handle the callback and exchange authorization code for tokens
       const result = await authService.handleCallback();
+      
+      console.log('handleCallback completed successfully');
+      console.log('Result:', result);
       
       if (result && result.user) {
         setStatus('success');
@@ -30,21 +40,29 @@ const Callback = () => {
           userId: result.user.profile.sub
         });
 
+        console.log('User info set, preparing to redirect to:', result.returnUrl || '/dashboard');
+
         // Wait a moment to show success message, then redirect
         setTimeout(() => {
           const redirectPath = result.returnUrl || '/dashboard';
+          console.log('Redirecting to:', redirectPath);
           navigate(redirectPath, { replace: true });
         }, 2000);
       } else {
         throw new Error('No user data received');
       }
     } catch (error) {
-      console.error('Authentication callback error:', error);
+      console.error('=== AUTHENTICATION CALLBACK ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       setStatus('error');
       setMessage(error.message || 'Authentication failed. Please try again.');
       
       // Redirect to landing page after showing error
       setTimeout(() => {
+        console.log('Redirecting to landing page due to error');
         navigate('/', { replace: true });
       }, 3000);
     }
