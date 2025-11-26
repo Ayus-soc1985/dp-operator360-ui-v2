@@ -1,26 +1,42 @@
 import React from 'react';
+import landingData from '../resources/landing.json';
+import userData from '../resources/userData.json';
+import aggregatedRoCounts from '../resources/aggregatedRoCounts.json';
+import keyIndicators from '../resources/keyIndicators.json';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ComposedChart, Line } from 'recharts';
 import { AlertCircle, AlertTriangle, Clock } from 'lucide-react';
 
 const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskCorrelation, riskRejectionData, apiData, patternAnalysis, highRiskCount, setActiveTab, setFilterRisk }) => {
-  // Mock data for RO risk distribution
-  const roRiskData = [
-    { ro: 'RO Mumbai', noRisk: 41, low: 25, medium: 15, high: 10 },
-    { ro: 'RO Lucknow', noRisk: 35, low: 25, medium: 14, high: 7 },
-    { ro: 'RO Bengaluru', noRisk: 32, low: 22, medium: 20, high: 10 },
-    { ro: 'RO Chandigarh', noRisk: 32, low: 20, medium: 22, high: 8 },
-    { ro: 'RO Delhi', noRisk: 29, low: 26, medium: 25, high: 10 },
-    { ro: 'RO Guwahati', noRisk: 29, low: 14, medium: 11, high: 10 },
-    { ro: 'RO Hyderabad', noRisk: 38, low: 25, medium: 14, high: 8 },
-    { ro: 'RO Ranchi', noRisk: 22, low: 27, medium: 12, high: 8 }
+  // Use landing.json data for RO risk distribution
+  const roRiskData = Array.isArray(aggregatedRoCounts)
+  ? aggregatedRoCounts.map(ro => ({
+      ro: ro.Ro,
+      high: ro.high_risk || 0,
+      medium: ro.med_risk || 0,
+      low: ro.low_risk || 0,
+      no: ro.no_risk || 0,
+      total: ro.total || 0
+    }))
+  : [];
+
+  // Pie chart data for user's RO group only
+  const userGroup = userData?.grouptype;
+  const groupData = Array.isArray(aggregatedRoCounts)
+    ? aggregatedRoCounts.find(ro => ro.Ro === userGroup)
+    : null;
+  const pieChartData = [
+    { name: 'Low Risk', value: groupData?.low_risk || 0, color: '#10b981' },
+    { name: 'Medium Risk', value: groupData?.med_risk || 0, color: '#f59e0b' },
+    { name: 'High Risk', value: groupData?.high_risk || 0, color: '#ef4444' },
+    { name: 'No Risk', value: groupData?.no_risk || 0, color: '#6366f1' }
   ];
 
   return (
     <div className="space-y-6">
-      {/* Key Insights & Sync Stats - Compact View */}
+      {/* Key Insights - Compact View */}
       {(apiData?.key_insights || apiData) && (
         <div className="bg-white rounded-xl shadow-md p-4 border">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {/* Highest Risk Operator */}
             {apiData?.key_insights && (
               <div className="text-center p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
@@ -44,30 +60,6 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
                 <p className="text-lg font-bold text-orange-600">{apiData.key_insights.most_common_anomoly.opt_num} ops</p>
               </div>
             )}
-
-            {/* 48hrs Sync */}
-            {apiData && (
-              <div className="text-center p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Clock className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-semibold text-indigo-800">48hrs Sync</span>
-                </div>
-                <p className="text-lg font-bold text-indigo-600">{apiData.opt_sync_last48hrs}</p>
-                <p className="text-xs text-indigo-700">operators</p>
-              </div>
-            )}
-
-            {/* 72hrs Sync */}
-            {apiData && (
-              <div className="text-center p-3 bg-teal-50 rounded-lg border-l-4 border-teal-500">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Clock className="w-4 h-4 text-teal-600" />
-                  <span className="text-xs font-semibold text-teal-800">72hrs Sync</span>
-                </div>
-                <p className="text-lg font-bold text-teal-600">{apiData.opt_sync_last72hrs}</p>
-                <p className="text-xs text-teal-700">operators</p>
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -78,18 +70,9 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
           <div className="bg-white bg-opacity-20 rounded-lg p-3 flex flex-col">
             <h3 className="font-semibold mb-1.5 text-base">Highest <span className="text-red-300">Risk</span> Operator</h3>
             <div className="flex-grow">
-              {apiData?.key_insights ? (
-                <>
-                  <p className="text-lg font-semibold">{apiData.key_insights.high_riskopt.name}</p>
-                  <p className="text-sm opacity-90">Risk Score: {(apiData.key_insights.high_riskopt.score * 100).toFixed(1)}%</p>
-                  <p className="text-sm opacity-75">{apiData.key_insights.high_riskopt.optid}</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-lg font-semibold">{anomalyAnalysis.sort((a, b) => b.risk_score - a.risk_score)[0].opt_name}</p>
-                  <p className="text-sm opacity-90">Risk Score: {(anomalyAnalysis.sort((a, b) => b.risk_score - a.risk_score)[0].risk_score * 100).toFixed(1)}%</p>
-                </>
-              )}
+              <p className="text-lg font-semibold">{keyIndicators.highest_risk_opt.opt_name}</p>
+              <p className="text-sm opacity-90">Risk Score: {(keyIndicators.highest_risk_opt.risk_score * 100).toFixed(1)}%</p>
+              <p className="text-sm opacity-75">{keyIndicators.highest_risk_opt.opt_id}</p>
             </div>
             <button 
               onClick={() => {
@@ -104,17 +87,8 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
           <div className="bg-white bg-opacity-20 rounded-lg p-3 flex flex-col">
             <h3 className="font-semibold mb-1.5 text-base">Most Common <span className="text-yellow-300">Anomaly</span></h3>
             <div className="flex-grow">
-              {apiData?.key_insights ? (
-                <>
-                  <p className="text-lg font-semibold">{apiData.key_insights.most_common_anomoly.anomoly_type}</p>
-                  <p className="text-sm opacity-90">Found in {apiData.key_insights.most_common_anomoly.opt_num} operators</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-lg font-semibold">{patternAnalysis[0]?.type || 'N/A'}</p>
-                  <p className="text-sm opacity-90">Found in {patternAnalysis[0]?.count || 0} operators</p>
-                </>
-              )}
+              <p className="text-lg font-semibold">Stale Machine Sync</p>
+              <p className="text-sm opacity-90">Found in {keyIndicators.most_common_anomaly["Stale Machine Sync"]} operators</p>
             </div>
             <button 
               onClick={() => setActiveTab('patterns')}
@@ -212,13 +186,13 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
           </ResponsiveContainer>
         </div>
 
-        {/* Risk Distribution - Compact Pie Chart */}
+        {/* Risk Distribution - Pie Chart for User's RO Group */}
         <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-purple-500">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Overall Risk</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{userGroup} Risk Distribution</h2>
           <ResponsiveContainer width="100%" height={450}>
             <PieChart>
               <Pie
-                data={riskDistribution}
+                data={pieChartData}
                 cx="50%"
                 cy="45%"
                 labelLine={true}
@@ -229,14 +203,14 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
                 dataKey="value"
                 paddingAngle={3}
               >
-                {riskDistribution.map((entry, index) => (
+                {pieChartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip 
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
-                    const total = riskDistribution.reduce((sum, item) => sum + item.value, 0);
+                    const total = pieChartData.reduce((sum, item) => sum + item.value, 0);
                     const percent = ((payload[0].value / total) * 100).toFixed(1);
                     return (
                       <div className="bg-white p-3 border-2 rounded-lg shadow-lg" style={{ borderColor: payload[0].payload.color }}>

@@ -1,0 +1,17 @@
+[
+  {
+    "operatorId": 1,
+    "reviewStatus": "approved",
+    "reviewer": "Admin"
+  },
+  {
+    "operatorId": 2,
+    "reviewStatus": "pending",
+    "reviewer": "Moderator"
+  },
+  {
+    "operatorId": 3,
+    "reviewStatus": "rejected",
+    "reviewer": "Admin"
+  }
+]

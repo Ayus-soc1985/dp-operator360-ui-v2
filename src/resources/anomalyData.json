@@ -1,0 +1,17 @@
+[
+  {
+    "operatorId": 1,
+    "anomalyType": "Pattern",
+    "count": 2
+  },
+  {
+    "operatorId": 2,
+    "anomalyType": "Velocity",
+    "count": 5
+  },
+  {
+    "operatorId": 3,
+    "anomalyType": "Geographic",
+    "count": 1
+  }
+]

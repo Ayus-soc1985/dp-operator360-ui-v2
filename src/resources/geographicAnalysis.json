@@ -1,0 +1,17 @@
+[
+  {
+    "operatorId": 1,
+    "region": "North",
+    "activity": 5
+  },
+  {
+    "operatorId": 2,
+    "region": "South",
+    "activity": 3
+  },
+  {
+    "operatorId": 3,
+    "region": "East",
+    "activity": 7
+  }
+]

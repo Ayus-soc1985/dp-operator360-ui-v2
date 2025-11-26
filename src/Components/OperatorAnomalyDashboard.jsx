@@ -4,6 +4,14 @@ import OverviewTab from './OverviewTab';
 import PatternAnalysisTab from './PatternAnalysisTab';
 import VelocityAnalysisTab from './VelocityAnalysisTab';
 import GeographicAnalysisTab from './GeographicAnalysisTab';
+import dashboardData from '../resources/dashboardData.json';
+import operatorList from '../resources/operatorList.json';
+import anomalyData from '../resources/anomalyData.json';
+import reviewData from '../resources/reviewData.json';
+import overviewData from '../resources/overviewData.json';
+import velocityAnalysis from '../resources/velocityAnalysis.json';
+import geographicAnalysis from '../resources/geographicAnalysis.json';
+import patternAnalysis from '../resources/patternAnalysis.json';
 import OperatorsTab from './OperatorsTab';
 
 const operatorData = [
@@ -142,7 +150,15 @@ const operatorData = [
     updt_resident_name_change_count: 0,
     risk_score: 0.1567135747
   }
-];
+]
+
+const defaultApiData = {
+  username: "Priyanshu Gupta",
+  usertype: "RO Lucknow",
+  low_risk_opt: 143,
+  med_risk_opt: 1,
+  high_risk_opt: 1
+};
 
 const OperatorAnomalyDashboard = () => {
   const [selectedOperator, setSelectedOperator] = useState(null);
@@ -168,7 +184,7 @@ const OperatorAnomalyDashboard = () => {
         console.error('Error fetching dashboard data:', err);
         setError(err.message);
         // Use fallback data if API fails
-        setApiData(null);
+        setApiData(defaultApiData);
       } finally {
         setLoading(false);
       }
@@ -532,23 +548,23 @@ const OperatorAnomalyDashboard = () => {
                 activeTab === 'patterns' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Pattern Analysis
+              Anomaly Indicators
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab('velocity')}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === 'velocity' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Velocity Analysis
-            </button>
+            </button> */}
             <button
               onClick={() => setActiveTab('geographic')}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === 'geographic' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Geographic Risk
+              Region Evaluation
             </button>
             <button
               onClick={() => setActiveTab('operators')}
@@ -556,7 +572,7 @@ const OperatorAnomalyDashboard = () => {
                 activeTab === 'operators' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Operators
+              View Operators
             </button>
           </div>
         </div>
@@ -584,11 +600,11 @@ const OperatorAnomalyDashboard = () => {
           />
         )}
 
-        {activeTab === 'velocity' && (
+        {/* {activeTab === 'velocity' && (
           <VelocityAnalysisTab 
             velocityData={velocityData}
           />
-        )}
+        )} */}
 
         {activeTab === 'geographic' && (
           <GeographicAnalysisTab 

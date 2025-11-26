@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "Operator A",
+    "risk": "low"
+  },
+  {
+    "id": 2,
+    "name": "Operator B",
+    "risk": "medium"
+  },
+  {
+    "id": 3,
+    "name": "Operator C",
+    "risk": "high"
+  }
+]

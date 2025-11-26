@@ -1,0 +1,14 @@
+[
+  {
+    "operatorId": 1,
+    "velocity": 10
+  },
+  {
+    "operatorId": 2,
+    "velocity": 20
+  },
+  {
+    "operatorId": 3,
+    "velocity": 15
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "operatorId": 1,
+    "pattern": "Type A",
+    "score": 80
+  },
+  {
+    "operatorId": 2,
+    "pattern": "Type B",
+    "score": 65
+  },
+  {
+    "operatorId": 3,
+    "pattern": "Type C",
+    "score": 90
+  }
+]
