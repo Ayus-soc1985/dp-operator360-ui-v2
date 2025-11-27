@@ -170,29 +170,29 @@ const OperatorAnomalyDashboard = () => {
   const [error, setError] = useState(null);
 
   // Fetch data from API
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('http://10.8.18.150:8080/api/v1/home');
-        if (!response.ok) {
-          throw new Error('Failed to fetch dashboard data');
-        }
-        const data = await response.json();
-        setApiData(data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError(err.message);
-        // Use fallback data if API fails
-        setApiData(defaultApiData);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchDashboardData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await fetch('http://10.8.18.150:8080/api/v1/home');
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch dashboard data');
+  //       }
+  //       const data = await response.json();
+  //       // setApiData(data);
+  //       setError(null);
+  //     } catch (err) {
+  //       console.error('Error fetching dashboard data:', err);
+  //       setError(err.message);
+  //       // Use fallback data if API fails
+  //       setApiData(defaultApiData);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchDashboardData();
-  }, []);
+  //   fetchDashboardData();
+  // }, []);
 
   // Enhanced anomaly detection with more patterns
   const anomalyAnalysis = useMemo(() => {
@@ -520,11 +520,11 @@ const OperatorAnomalyDashboard = () => {
           </div>
         </div>
 
-        {loading && (
+        {/* {loading && (
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
             <p className="text-blue-700">Loading dashboard data...</p>
           </div>
-        )}
+        )} */}
 
         {/* {error && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
