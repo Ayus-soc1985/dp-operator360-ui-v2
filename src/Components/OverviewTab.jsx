@@ -54,36 +54,6 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
 
   return (
     <div className="space-y-6">
-      {/* Key Insights - Compact View */}
-      {(apiData?.key_insights || apiData) && (
-        <div className="bg-white rounded-xl shadow-md p-4 border">
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-            {/* Highest Risk Operator */}
-            {apiData?.key_insights && (
-              <div className="text-center p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-xs font-semibold text-red-800">High Risk</span>
-                </div>
-                <p className="text-sm font-bold text-red-900 truncate">{apiData.key_insights.high_riskopt.name}</p>
-                <p className="text-lg font-bold text-red-600">{(apiData.key_insights.high_riskopt.score * 100).toFixed(1)}%</p>
-              </div>
-            )}
-
-            {/* Most Common Anomaly */}
-            {apiData?.key_insights && (
-              <div className="text-center p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <AlertTriangle className="w-4 h-4 text-orange-600" />
-                  <span className="text-xs font-semibold text-orange-800">Common Issue</span>
-                </div>
-                <p className="text-sm font-bold text-orange-900 truncate">{apiData.key_insights.most_common_anomoly.anomoly_type}</p>
-                <p className="text-lg font-bold text-orange-600">{apiData.key_insights.most_common_anomoly.opt_num} ops</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       {/* Key Insights Summary */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-5 text-white">
         

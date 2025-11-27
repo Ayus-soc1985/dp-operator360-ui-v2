@@ -13,17 +13,18 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/callback" element={<Callback />} />
+            {/* <Route path="/callback" element={<Callback />} /> */}
+            <Route path="/dashboard" element={<OperatorAnomalyDashboard />} />
             
             {/* Protected Routes */}
-            <Route 
+            {/* <Route 
               path="/dashboard" 
               element={
                 <ProtectedRoute>
                   <OperatorAnomalyDashboard />
                 </ProtectedRoute>
               } 
-            />
+            /> */}
             
             {/* Redirect unknown routes to landing page */}
             <Route path="*" element={<Navigate to="/" replace />} />

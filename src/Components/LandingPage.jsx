@@ -8,33 +8,36 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Check if user is already authenticated
-    checkAuthentication();
-  }, []);
+  // useEffect(() => {
+  //   // Check if user is already authenticated
+  //   checkAuthentication();
+  // }, []);
 
-  const checkAuthentication = async () => {
-    try {
-      const isAuth = await authService.isAuthenticated();
-      if (isAuth) {
-        window.location.href = '/dashboard';
-      }
-    } catch (err) {
-      console.error('Error checking authentication:', err);
-    }
-  };
+  // const checkAuthentication = async () => {
+  //   try {
+  //     const isAuth = await authService.isAuthenticated();
+  //     if (isAuth) {
+  //       window.location.href = '/dashboard';
+  //     }
+  //   } catch (err) {
+  //     console.error('Error checking authentication:', err);
+  //   }
+  // };
 
   const handleSignIn = async () => {
-    setLoading(true);
-    setError(null);
+
+     window.location.href = '/dashboard';
+     
+    // setLoading(true);
+    // setError(null);
     
-    try {
-      await authService.login();
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('Failed to initiate login. Please try again.');
-      setLoading(false);
-    }
+    // try {
+    //   await authService.login();
+    // } catch (err) {
+    //   console.error('Login error:', err);
+    //   setError('Failed to initiate login. Please try again.');
+    //   setLoading(false);
+    // }
   };
 
   return (

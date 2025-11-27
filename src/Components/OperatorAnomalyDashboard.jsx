@@ -194,6 +194,10 @@ const OperatorAnomalyDashboard = () => {
   //   fetchDashboardData();
   // }, []);
 
+  useEffect(() => {
+    setApiData(defaultApiData);
+  }, []);
+
   // Enhanced anomaly detection with more patterns
   const anomalyAnalysis = useMemo(() => {
     const avgProcessingTime = operatorData.reduce((sum, op) => sum + op.pkt_creation_duration_avg, 0) / operatorData.length;
