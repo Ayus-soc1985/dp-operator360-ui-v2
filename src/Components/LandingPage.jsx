@@ -107,24 +107,24 @@ const LandingPage = () => {
           
           <div className="inline-flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
             <Shield className="w-8 h-8 text-[#9b7bb5]" />
-            <h1 className="text-2xl font-bold text-gray-800">Operator 360</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Data Platform</h1>
           </div>
           
           <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
-            Comprehensive Operator
-            <span className="block text-[#9b7bb5] mt-2">Anomaly Detection</span>
+            Operator 360
+            <span className="block text-[#9b7bb5] mt-2">Analytics and Risk Identification</span>
           </h2>
           
           <p className="text-lg text-gray-700 leading-relaxed">
-            Monitor, analyze, and manage operator activities with advanced anomaly detection powered by UIDAI's secure infrastructure.
+            Monitor, analyze, and manage operator activities with advanced anomaly detection powered by UIDAI's risk engine infrastructure.
           </p>
 
           {/* Features */}
           <div className="space-y-4 pt-4">
             {[
-              { icon: CheckCircle, text: 'Real-time anomaly detection' },
-              { icon: TrendingUp, text: 'Performance analytics dashboard' },
-              { icon: Shield, text: 'Secure OIDC authentication' }
+              { icon: CheckCircle, text: 'Operator monitoring and analytics' },
+              { icon: TrendingUp, text: 'Packet level analysis' },
+              { icon: Shield, text: 'Feedback for fraudulent activities' }
             ].map((feature, idx) => (
               <div 
                 key={idx} 
@@ -170,7 +170,7 @@ const LandingPage = () => {
             <button
               onClick={handleSignIn}
               disabled={loading}
-              className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg ${
+              className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg mb-3 ${
                 loading
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#9b7bb5] to-[#d2c5e7] hover:from-[#7a5f93] hover:to-[#9b7bb5] text-white hover:shadow-xl hover:scale-105 active:scale-95'
@@ -190,6 +190,16 @@ const LandingPage = () => {
                   Sign In with SSO
                 </span>
               )}
+            </button>
+            
+            {/* Development Bypass Button */}
+            <button
+              onClick={() => window.location.href = '/dashboard'}
+              className="w-full py-3 px-6 rounded-xl font-medium text-sm transition-all duration-300 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400"
+            >
+              <span className="flex items-center justify-center gap-2">
+                🚀 Quick Access (Dev Mode)
+              </span>
             </button>
 
             <div className="mt-6 text-center">

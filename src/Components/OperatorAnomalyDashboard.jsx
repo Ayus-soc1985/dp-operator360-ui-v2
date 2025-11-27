@@ -164,6 +164,7 @@ const OperatorAnomalyDashboard = () => {
   const [selectedOperator, setSelectedOperator] = useState(null);
   const [filterRisk, setFilterRisk] = useState('all');
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedRo, setSelectedRo] = useState('Bengaluru');
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -590,14 +591,12 @@ const OperatorAnomalyDashboard = () => {
             highRiskCount={highRiskCount}
             setActiveTab={setActiveTab}
             setFilterRisk={setFilterRisk}
+            setSelectedOperator={setSelectedOperator}
           />
         )}
 
         {activeTab === 'patterns' && (
-          <PatternAnalysisTab 
-            patternAnalysis={patternAnalysis}
-            getCategoryColor={getCategoryColor}
-          />
+          <PatternAnalysisTab />
         )}
 
         {/* {activeTab === 'velocity' && (
@@ -607,10 +606,31 @@ const OperatorAnomalyDashboard = () => {
         )} */}
 
         {activeTab === 'geographic' && (
-          <GeographicAnalysisTab 
-            geographicRisk={geographicRisk}
-            anomalyAnalysis={anomalyAnalysis}
-          />
+          <div className="space-y-6">
+            {/* RO Selector */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Select Regional Office</h3>
+              <div className="flex flex-wrap gap-3">
+                {['Bengaluru', 'Mumbai', 'Delhi', 'Lucknow', 'Hyderabad', 'Ranchi', 'Guwahati', 'Chandigarh'].map((ro) => (
+                  <button
+                    key={ro}
+                    onClick={() => setSelectedRo(ro)}
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                      selectedRo === ro 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {ro}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <GeographicAnalysisTab 
+              selectedRo={selectedRo}
+            />
+          </div>
         )}
 
         {activeTab === 'operators' && (

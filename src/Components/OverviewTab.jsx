@@ -3,10 +3,13 @@ import landingData from '../resources/landing.json';
 import userData from '../resources/userData.json';
 import aggregatedRoCounts from '../resources/aggregatedRoCounts.json';
 import keyIndicators from '../resources/keyIndicators.json';
+import highRiskOperators from '../resources/opt_data/high_risk_opt.json';
+import medRiskOperators from '../resources/opt_data/med_risk_opt.json';
+import lowRiskOperators from '../resources/opt_data/low_risk_opt.json';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ComposedChart, Line } from 'recharts';
 import { AlertCircle, AlertTriangle, Clock } from 'lucide-react';
 
-const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskCorrelation, riskRejectionData, apiData, patternAnalysis, highRiskCount, setActiveTab, setFilterRisk }) => {
+const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskCorrelation, riskRejectionData, apiData, patternAnalysis, highRiskCount, setActiveTab, setFilterRisk, setSelectedOperator }) => {
   // Use landing.json data for RO risk distribution
   const roRiskData = Array.isArray(aggregatedRoCounts)
   ? aggregatedRoCounts.map(ro => ({
@@ -30,6 +33,24 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
     { name: 'High Risk', value: groupData?.high_risk || 0, color: '#ef4444' },
     { name: 'No Risk', value: groupData?.no_risk || 0, color: '#6366f1' }
   ];
+
+  // Function to find and navigate to specific operator
+  const navigateToOperator = (optId) => {
+    // Find the operator data from all risk categories
+    const findOperatorById = (id) => {
+      if (highRiskOperators[id]) return highRiskOperators[id];
+      if (medRiskOperators[id]) return medRiskOperators[id];
+      if (lowRiskOperators[id]) return lowRiskOperators[id];
+      return null;
+    };
+
+    const operatorData = findOperatorById(optId);
+    if (operatorData) {
+      setSelectedOperator(operatorData);
+      setActiveTab('operators');
+      setFilterRisk('high'); // Set to high risk since this is the highest risk operator
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -75,10 +96,7 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
               <p className="text-sm opacity-75">{keyIndicators.highest_risk_opt.opt_id}</p>
             </div>
             <button 
-              onClick={() => {
-                setActiveTab('operators');
-                setFilterRisk('high');
-              }}
+              onClick={() => navigateToOperator(keyIndicators.highest_risk_opt.opt_id)}
               className="mt-2 w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold py-1.5 px-3 text-sm rounded-lg transition duration-200 shadow-md"
             >
               Investigate
