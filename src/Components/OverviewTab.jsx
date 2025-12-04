@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import landingData from '../resources/landing.json';
 import userData from '../resources/userData.json';
 import aggregatedRoCounts from '../resources/aggregatedRoCounts.json';
@@ -10,6 +11,7 @@ import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Toolti
 import { AlertCircle, AlertTriangle, Clock } from 'lucide-react';
 
 const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskCorrelation, riskRejectionData, apiData, patternAnalysis, highRiskCount, setActiveTab, setFilterRisk, setSelectedOperator }) => {
+  const navigate = useNavigate();
   // Use landing.json data for RO risk distribution
   const roRiskData = Array.isArray(aggregatedRoCounts)
   ? aggregatedRoCounts.map(ro => ({
@@ -79,7 +81,7 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
               <p className="text-sm opacity-90">Found in {keyIndicators.most_common_anomaly["Stale Machine Sync"]} operators</p>
             </div>
             <button 
-              onClick={() => setActiveTab('patterns')}
+              onClick={() => navigate('/anomalyindicators')}
               className="mt-2 w-full bg-white text-purple-600 hover:bg-purple-50 font-semibold py-1.5 px-3 text-sm rounded-lg transition duration-200 shadow-md"
             >
               Investigate
@@ -226,39 +228,7 @@ const OverviewTab = ({ anomalyAnalysis, riskDistribution, performanceData, riskC
   
       </div>
 
-    
 
-      {/* Risk Score vs Packet Update Rejection Rate */}
-      {/* <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Risk Score vs Packet Update Rejection Rate</h2>
-        <p className="text-gray-600 mb-4">Analyzing the relationship between operator risk scores and packet update rejection rates</p>
-        <ResponsiveContainer width="100%" height={400}>
-          <ComposedChart data={riskRejectionData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="opt_name" angle={-45} textAnchor="end" height={120} interval={0} tick={{ fontSize: 10 }} />
-            <YAxis yAxisId="left" label={{ value: 'Risk Score (%)', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Rejection Rate (%)', angle: 90, position: 'insideRight' }} />
-            <Tooltip 
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="bg-white p-3 border rounded shadow-lg">
-                      <p className="font-bold text-gray-900">{payload[0].payload.opt_name}</p>
-                      <p className="text-sm text-blue-600">Risk Score: {payload[0].payload.risk_score_percent}%</p>
-                      <p className="text-sm text-red-600">Rejection Rate: {payload[0].payload.pkt_updt_rejection_rate}%</p>
-                      <p className="text-sm text-gray-600">District: {payload[0].payload.opt_district}</p>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Legend />
-            <Bar yAxisId="left" dataKey="risk_score_percent" fill="#3b82f6" name="Risk Score (%)" />
-            <Line yAxisId="right" type="monotone" dataKey="pkt_updt_rejection_rate" stroke="#ef4444" strokeWidth={3} name="Rejection Rate (%)" dot={{ r: 5 }} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div> */}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity, Clock, Zap } from 'lucide-react';
 import OverviewTab from './OverviewTab';
 import PatternAnalysisTab from './PatternAnalysisTab';
@@ -161,6 +162,7 @@ const defaultApiData = {
 };
 
 const OperatorAnomalyDashboard = () => {
+  const navigate = useNavigate();
   const [selectedOperator, setSelectedOperator] = useState(null);
   const [filterRisk, setFilterRisk] = useState('all');
   const [activeTab, setActiveTab] = useState('overview');
@@ -548,7 +550,7 @@ const OperatorAnomalyDashboard = () => {
               Overview
             </button>
             <button
-              onClick={() => setActiveTab('patterns')}
+              onClick={() => navigate('/anomalyindicators')}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === 'patterns' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -564,7 +566,7 @@ const OperatorAnomalyDashboard = () => {
               Velocity Analysis
             </button> */}
             <button
-              onClick={() => setActiveTab('geographic')}
+              onClick={() => navigate('/regionevaluation')}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === 'geographic' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -572,10 +574,8 @@ const OperatorAnomalyDashboard = () => {
               Region Evaluation
             </button>
             <button
-              onClick={() => setActiveTab('operators')}
-              className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-                activeTab === 'operators' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => navigate('/viewoperators')}
+              className="px-4 py-2 rounded-lg font-medium transition whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
               View Operators
             </button>

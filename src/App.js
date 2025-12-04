@@ -4,6 +4,9 @@ import LandingPage from './Components/LandingPage';
 import Callback from './Components/Callback';
 import ProtectedRoute from './Components/ProtectedRoute';
 import OperatorAnomalyDashboard from './Components/OperatorAnomalyDashboard';
+import AnomalyIndicatorsPage from './Components/AnomalyIndicatorsPage';
+import RegionEvaluationPage from './Components/RegionEvaluationPage';
+import ViewOperatorsPage from './Components/ViewOperatorsPage';
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             {/* <Route path="/callback" element={<Callback />} /> */}
             <Route path="/dashboard" element={<OperatorAnomalyDashboard />} />
+            <Route path="/anomalyindicators" element={<AnomalyIndicatorsPage />} />
+            <Route path="/regionevaluation" element={<RegionEvaluationPage />} />
+            <Route path="/viewoperators" element={<ViewOperatorsPage />} />
             
             {/* Protected Routes */}
             {/* <Route 
