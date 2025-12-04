@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, XCircle, AlertCircle, CheckCircle, Activity } from 'lucide-react';
+import { Shield, XCircle, AlertCircle, CheckCircle, Activity, ChevronRight, Home } from 'lucide-react';
 import OperatorsTab from './OperatorsTab';
 
 const ViewOperatorsPage = () => {
@@ -56,6 +56,26 @@ const ViewOperatorsPage = () => {
               <div className="text-lg font-semibold">Nov 13, 2025</div>
             </div>
           </div>
+        </div>
+
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-2 text-sm">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition"
+          >
+            <Home className="w-4 h-4" />
+            <span>Home</span>
+          </button>
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="text-gray-600 hover:text-blue-600 transition"
+          >
+            Dashboard
+          </button>
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <span className="text-blue-600 font-medium">View Operators</span>
         </div>
 
         {/* Tab Navigation */}

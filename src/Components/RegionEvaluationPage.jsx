@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, ChevronRight, Home } from 'lucide-react';
 import GeographicAnalysisTab from './GeographicAnalysisTab';
 
 const RegionEvaluationPage = () => {
@@ -24,6 +24,26 @@ const RegionEvaluationPage = () => {
               <div className="text-lg font-semibold">Nov 13, 2025</div>
             </div>
           </div>
+        </div>
+
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-2 text-sm">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition"
+          >
+            <Home className="w-4 h-4" />
+            <span>Home</span>
+          </button>
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="text-gray-600 hover:text-blue-600 transition"
+          >
+            Dashboard
+          </button>
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <span className="text-blue-600 font-medium">Region Evaluation</span>
         </div>
 
         {/* Tab Navigation */}

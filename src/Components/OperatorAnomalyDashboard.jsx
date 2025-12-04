@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity, Clock, Zap } from 'lucide-react';
+import { AlertTriangle, TrendingUp, Shield, Users, AlertCircle, CheckCircle, XCircle, Activity, Clock, Zap, ChevronRight, Home } from 'lucide-react';
 import OverviewTab from './OverviewTab';
 import PatternAnalysisTab from './PatternAnalysisTab';
 import VelocityAnalysisTab from './VelocityAnalysisTab';
@@ -537,6 +537,19 @@ const OperatorAnomalyDashboard = () => {
             <p className="text-yellow-800">⚠️ Using cached data. API connection issue: {error}</p>
           </div>
         )} */}
+
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-2 text-sm">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition"
+          >
+            <Home className="w-4 h-4" />
+            <span>Home</span>
+          </button>
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <span className="text-blue-600 font-medium">Dashboard</span>
+        </div>
 
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl shadow-md p-2">
